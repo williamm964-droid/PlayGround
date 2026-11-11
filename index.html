@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#101513" />
+  <link rel="icon" href="data:," />
+  <title>BREACHPOINT — District Zero</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <script type="importmap">
+    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js"}}
+  </script>
+</head>
+<body>
+  <main id="game-shell">
+    <canvas id="game"></canvas>
+    <div class="grain"></div>
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">B</span><span>BREACH<span class="brand-light">POINT</span></span><i class="brand-sep"></i><span class="brand-sub">FIELD OPS / 07</span></div>
+      <div class="mission"><span class="live-dot"></span><span>OPERATION NIGHTFALL</span><span class="mission-divider">/</span><span class="mission-sub">DISTRICT ZERO</span></div>
+      <div class="top-right"><span class="ping"><i></i> LINK STABLE</span><span class="round-pill">ROUND <b id="round-num">01</b></span></div>
+    </header>
+
+    <section class="objective-card">
+      <div class="objective-kicker"><span class="kicker-line"></span> PRIMARY OBJECTIVE</div>
+      <div class="objective-title" id="objective-title">SECURE THE SITE</div>
+      <div class="objective-copy" id="objective-copy">Clear hostiles, then secure the uplink.</div>
+      <div class="objective-progress"><span id="objective-bar"></span></div>
+      <div class="objective-foot"><span id="enemy-count">HOSTILES <b>05</b></span><span id="objective-state">SITE CONTESTED</span></div>
+    </section>
+
+    <div class="threat-indicator"><span class="threat-icon">⌖</span><div><small>THREAT LEVEL</small><b id="threat-label">ELEVATED</b></div><div class="threat-bars"><i></i><i></i><i></i><i></i><i></i></div></div>
+    <div class="compass"><span class="compass-mark">N</span><span class="compass-rule"></span><span id="compass-deg">000°</span></div>
+
+    <div class="center-hud" id="center-hud">
+      <div class="hitmarker" id="hitmarker"><i></i><i></i><i></i><i></i></div>
+      <div class="interaction" id="interaction"><span class="keycap">E</span><span>HOLD TO SECURE UPLINK</span></div>
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <div class="objective-marker" id="objective-marker"><span class="marker-diamond">◆</span><span class="marker-label">UPLINK <b id="marker-distance">38M</b></span></div>
+
+    <div class="bottom-left">
+      <div class="operator-card">
+        <div class="operator-avatar"><span>V</span><i></i></div>
+        <div class="operator-info"><small>VIPER / ASSAULT</small><b>OPERATOR ALPHA</b><div class="status-row"><i></i> ACTIVE</div></div>
+        <div class="health-wrap"><div class="health-label"><span>VITALS</span><b id="health-value">100</b></div><div class="health-track"><span id="health-bar"></span></div><div class="armor-track"><i></i><i></i><i></i><i></i><i></i></div></div>
+      </div>
+      <div class="squad-line"><span class="squad-dash"></span> SOLO INSERTION <span class="squad-dash"></span><b>NO SUPPORT AVAILABLE</b></div>
+    </div>
+
+    <div class="bottom-right">
+      <div class="weapon-card">
+        <div class="weapon-meta"><span>PRIMARY / 5.56×45</span><span class="weapon-mode"><i></i> AUTO</span></div>
+        <div class="weapon-name">MK18 <span>MOD 1</span></div>
+        <div class="weapon-bottom"><div class="ammo"><strong id="ammo-current">30</strong><span class="ammo-slash">/</span><span id="ammo-reserve">120</span></div><div class="ammo-bars"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="weapon-keys"><span><b>R</b> RELOAD</span><span><b>Q</b> FRAG <em id="frag-count">1</em></span></div>
+      </div>
+    </div>
+
+    <div class="damage-vignette" id="damage-vignette"></div>
+    <div class="objective-complete" id="objective-complete"><span class="complete-icon">✓</span><small>MISSION COMPLETE</small><b>SECTOR SECURED</b><span>EXTRACTION WINDOW OPEN</span><button id="next-round">DEPLOY AGAIN <b>↗</b></button></div>
+    <div class="game-over" id="game-over"><small>OPERATOR DOWN</small><b>MISSION FAILED</b><button id="restart-game">REDEPLOY <span>↻</span></button></div>
+
+    <div class="start-screen" id="start-screen">
+      <div class="start-backdrop"></div>
+      <div class="start-content">
+        <div class="eyebrow"><span></span> TACTICAL RESPONSE SIMULATION <span></span></div>
+        <h1>BREACH<span>POINT</span></h1>
+        <div class="start-subtitle">DISTRICT ZERO <i>—</i> NIGHTFALL</div>
+        <div class="start-rule"><span></span><b>01</b><span></span></div>
+        <p>Hostile forces have seized the uplink station.<br>Clear the area. Secure the intel. Get out alive.</p>
+        <button id="deploy-button"><span>DEPLOY OPERATOR</span><b>↗</b></button>
+        <div class="start-controls"><span><b>W A S D</b> MOVE</span><i></i><span><b>MOUSE</b> AIM</span><i></i><span><b>CLICK</b> FIRE</span></div>
+        <div class="start-note">THIRD-PERSON TACTICAL ENGAGEMENT <span>•</span> SINGLE-PLAYER</div>
+      </div>
+      <div class="start-corner start-corner-a">BREACHPOINT <span>FIELD SIM / BUILD 2.4.1</span></div>
+      <div class="start-corner start-corner-b">SECURE CHANNEL <span>ENCRYPTED // 09.47.21</span></div>
+    </div>
+
+    <div class="pause-screen" id="pause-screen"><div class="pause-panel"><small>FIELD OPS / PAUSED</small><b>TAKE A BREATH.</b><p>Press <strong>ESC</strong> or click below to return to the district.</p><button id="resume-button">RESUME OPERATION <span>↗</span></button></div></div>
+
+    <div class="mobile-controls" id="mobile-controls">
+      <div class="joystick" id="joystick"><div class="joystick-knob" id="joystick-knob"></div></div>
+      <button class="mobile-fire" id="mobile-fire">FIRE</button>
+      <button class="mobile-reload" id="mobile-reload">↻</button>
+      <button class="mobile-secure" id="mobile-secure">HOLD<br>SECURE</button>
+    </div>
+
+    <div class="control-hint" id="control-hint"><span>WASD</span> MOVE <i></i><span>SHIFT</span> SPRINT <i></i><span>RMB</span> AIM <i></i><span>LMB</span> FIRE <i></i><span>SPACE</span> ROLL</div>
+  </main>
+  <script type="module" src="game.js"></script>
+</body>
+</html>
